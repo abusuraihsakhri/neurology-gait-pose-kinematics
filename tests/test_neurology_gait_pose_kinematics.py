@@ -3,6 +3,7 @@ Automated Pytest Test Suite for Neurology Gait Pose Kinematics.
 Domain: Clinical & Biomedical AI
 Standard: CAP / CLSI / ISO Standards
 """
+import math
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -63,3 +64,13 @@ def test_supervisor_consensus_and_audit():
     assert main(["audit", "--task-id", "CLI-TEST-01"]) == 0
     assert main(["chat", "Explain", "specifications"]) == 0
     assert main(["verify-audit"]) == 0
+
+
+def test_nan_inf_rejection():
+    """NaN and Inf metric values must be rejected by validation."""
+    with pytest.raises(ValueError, match="must be finite"):
+        SystemTaskPayload(task_id="T-NAN", target_identifier="KEY-01", primary_metric=math.nan)
+    with pytest.raises(ValueError, match="must be finite"):
+        SystemTaskPayload(task_id="T-INF", target_identifier="KEY-01", primary_metric=10.0, secondary_metric=math.inf)
+    with pytest.raises(ValueError, match="must be finite"):
+        SystemTaskPayload(task_id="T-NEG-INF", target_identifier="KEY-01", primary_metric=-math.inf)

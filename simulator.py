@@ -1,6 +1,7 @@
 """
 Distributed Component High-Throughput Traffic & Stress Testing Simulator for Neurology Gait Pose Kinematics.
 """
+import argparse
 import time
 import random
 import sys
@@ -63,5 +64,11 @@ def run_simulation(iterations: int = 100):
     print("=" * 70)
 
 if __name__ == "__main__":
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 100
-    run_simulation(n)
+    parser = argparse.ArgumentParser(
+        prog="simulator",
+        description="High-throughput simulation benchmark for Neurology Gait Pose Kinematics"
+    )
+    parser.add_argument("--tasks", type=int, default=100, help="Number of simulation tasks to run")
+    parser.add_argument("--concurrency", type=int, default=1, help="Concurrency level (reserved for future use)")
+    args = parser.parse_args()
+    run_simulation(args.tasks)
