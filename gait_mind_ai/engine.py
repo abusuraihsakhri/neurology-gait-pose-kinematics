@@ -9,7 +9,7 @@ from .models import FrontierPayload, AgentTelemetryAlert, ExecutionStatus
 
 
 class FrontierDomainEngine:
-    STANDARD = "MDS-UPDRS Motor Examination Standards"
+    STANDARD = "Illustrative threshold rules (not clinically validated)"
     PRIMARY_BOUND = 25.0
     SECONDARY_BOUND = 10.0
 

@@ -14,8 +14,8 @@ supervisor = SystemSupervisor(model_provider="mock")
 
 app = FastAPI(
     title="Neurology Gait Pose Kinematics API",
-    description="Enterprise Distributed Component Platform (Clinical & Biomedical AI)",
-    version="3.0.0-ENTERPRISE",
+    description="Rule-based research demonstration; not a validated gait or clinical decision tool.",
+    version="2.0.1",
 )
 
 
@@ -25,7 +25,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "HEALTHY", "service": "neurology-gait-pose-kinematics", "domain": "Clinical & Biomedical AI", "standard": "CAP / CLSI / ISO Standards", "version": "3.0.0-ENTERPRISE"}
+    return {"status": "HEALTHY", "service": "neurology-gait-pose-kinematics", "domain": "Clinical & Biomedical AI", "standard": "Illustrative thresholds only", "version": "2.0.1"}
 
 
 @app.get("/metrics")
@@ -33,7 +33,7 @@ def metrics():
     return {
         "dossiers_processed_total": len(supervisor.dossier_registry),
         "audit_blocks_total": len(AuditLogger.get_trail()),
-        "system_status": "NOMINAL_OPTIMAL"
+        "system_status": "AVAILABLE"
     }
 
 

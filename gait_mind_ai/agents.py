@@ -93,7 +93,7 @@ class GaitMindCoordinator:
             "critical_count": crit_count,
             "warning_count": warn_count,
             "alerts": [a.to_dict() for a in all_alerts],
-            "standard_specification": "MDS-UPDRS Motor Examination Standards",
+            "standard_specification": "Illustrative threshold rules (not clinically validated)",
             "consensus_summary": f"Consensus evaluation completed across 3 sub-agents with status [{status.value}].",
         }
 
