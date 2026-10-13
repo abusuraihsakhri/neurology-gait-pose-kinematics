@@ -120,9 +120,11 @@ def main(argv=None):
             import uvicorn
             from .server import create_app
             app = create_app()
-            if app:
-                print(f"Starting GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia on http://{args.host}:{args.port}")
-                uvicorn.run(app, host=args.host, port=args.port)
+            if app is None:
+                print("FastAPI is not installed. Run 'pip install .[server]'", file=sys.stderr)
+                return 1
+            print(f"Starting legacy GaitMind API on http://{args.host}:{args.port}")
+            uvicorn.run(app, host=args.host, port=args.port)
         except ImportError:
             print("FastAPI / uvicorn not installed. Run 'pip install fastapi uvicorn'")
             return 1
