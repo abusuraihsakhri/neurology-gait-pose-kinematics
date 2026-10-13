@@ -16,7 +16,8 @@ function download(filename, data, mime) {
   document.body.append(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(url);
+  // Keep the object URL alive long enough for browsers to start the download.
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function renderResult(result) {
   const status = byId('status-label');
