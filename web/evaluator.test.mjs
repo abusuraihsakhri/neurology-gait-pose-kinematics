@@ -46,3 +46,10 @@ test('bad rows are reported, not omitted', () => {
   assert.equal(out[1].status, 'ROUTINE');
   assert.match(resultsCsv(out), /ERROR/);
 });
+\ntest('whitespace-only numeric input is invalid', () => {
+  assert.throws(() => evaluate(payload({ primary_metric: '  ' })), /required/);
+});
+test('CSV export neutralizes spreadsheet formulas', () => {
+  const csv = resultsCsv([{row: 2, task_id: '=2+2', status: 'ERROR', alerts: '', error: ''}]);
+  assert.ok(csv.includes(`"'=2+2"`));
+});
