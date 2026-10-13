@@ -132,7 +132,7 @@ export function resultsCsv(results) {
   const quote = value => {
     let clean = String(value ?? '');
     // Prevent spreadsheet formula execution when exported CSV is opened in Excel.
-    if (/^[\\t\\r\\n ]*[=+@-]/.test(clean)) clean = "'" + clean;
+    if (/^\s*[=+@-]/.test(clean)) clean = "'" + clean;
     return '"' + clean.replaceAll('"', '""') + '"';
   };
   return [columns.join(','), ...results.map(row => columns.map(key => quote(row[key])).join(','))].join('\r\n') + '\r\n';
