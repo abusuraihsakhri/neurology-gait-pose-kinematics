@@ -1,0 +1,11 @@
+.git
+.github
+__pycache__
+*.pyc
+.pytest_cache
+.venv
+.env
+.env.*
+*.log
+results.csv
+output.csv

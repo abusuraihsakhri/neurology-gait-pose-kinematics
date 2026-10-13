@@ -1,8 +1,10 @@
 """
 FastAPI REST API Server for Neurology Gait Pose Kinematics.
 """
-from typing import Dict, Any, List
-from fastapi import FastAPI, HTTPException
+import hmac
+import os
+from typing import Dict, Any, List, Optional
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from .base import AuditLogger, PHIGuard
 from .models import SystemTaskPayload, ConsensusDossier
@@ -51,5 +53,8 @@ def api_chat(req: ChatRequest):
 
 
 @app.get("/api/audit/logs")
-def api_audit_logs():
+def api_audit_logs(x_audit_token: Optional[str] = Header(default=None)):
+    token = os.getenv("AUDIT_ADMIN_TOKEN")
+    if not token or not x_audit_token or not hmac.compare_digest(x_audit_token, token):
+        raise HTTPException(status_code=403, detail="Audit-log access is disabled or unauthorized")
     return {"audit_trail": AuditLogger.get_trail(), "verified": AuditLogger.verify_integrity()}

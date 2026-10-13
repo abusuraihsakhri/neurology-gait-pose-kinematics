@@ -15,7 +15,7 @@ def create_app():
 
         app = FastAPI(
             title="GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia",
-            description="Extracts 3D skeletal keypoints from video, calculating stride length, cadence, arm swing asymmetry, and UPDRS motor scores.",
+            description="Rule-based numeric metric checks. This API does not process video or calculate clinical MDS-UPDRS scores.",
             version="2.0.0-FRONTIER",
         )
 
