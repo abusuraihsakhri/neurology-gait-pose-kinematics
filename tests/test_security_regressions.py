@@ -56,3 +56,17 @@ def test_unimplemented_llm_providers_do_not_pretend_to_work():
 
 def test_mock_does_not_claim_validated_analysis():
     assert "No clinical or scientific analysis" in LLMFactory.create().invoke("status")
+\n
+def test_api_rejects_disallowed_identifiers():
+    client = TestClient(app)
+    request = {
+        "task_id": "T1", "target_identifier": "MRN-123456",
+        "primary_metric": 10, "secondary_metric": 1,
+        "status_descriptor": "NOMINAL",
+    }
+    response = client.post("/api/audit", json=request)
+    assert response.status_code == 422
+    assert "MRN-123456" not in response.text
+    chat = client.post("/api/chat", json={"query": "Patient John Doe"})
+    assert chat.status_code == 422
+    assert "John Doe" not in chat.text
