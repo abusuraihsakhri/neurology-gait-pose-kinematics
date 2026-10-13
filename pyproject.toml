@@ -29,3 +29,9 @@ gait-mind = "gait_mind_ai.cli:main"
 [project.urls]
 Homepage = "https://github.com/abusuraihsakhri/neurology-gait-pose-kinematics"
 Repository = "https://github.com/abusuraihsakhri/neurology-gait-pose-kinematics"
+
+[tool.setuptools]
+py-modules = ["cli", "enrichment", "simulator", "gait_mind_ai_app"]
+
+[tool.setuptools.packages.find]
+include = ["agents*", "gait_mind_ai*"]
