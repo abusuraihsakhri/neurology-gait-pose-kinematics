@@ -1,6 +1,6 @@
 """
 Enrichment Feature Implementation for neurology-gait-pose-kinematics.
-Generated based on domain-specific requirements in specifications.
+Placeholder threshold evaluators only; no ML, image processing, or instrument integration.
 """
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional, Tuple

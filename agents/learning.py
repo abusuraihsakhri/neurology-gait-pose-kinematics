@@ -1,5 +1,5 @@
 """
-Autonomous Bayesian Calibration & Active Learning Feedback Engine for neurology-gait-pose-kinematics.
+Simple heuristic concordance tracker (not Bayesian calibration or an ML training system).
 """
 import math
 from typing import Dict, Any, List, Optional
@@ -13,7 +13,7 @@ class WorkerPerformanceMetric(BaseModel):
     dynamic_weight: float = 1.0
 
 class ActiveLearningEngine:
-    """Continuously refines sub-agent voting weights based on consensus feedback."""
+    """Tracks heuristic agreement fractions in memory; not connected to decision output."""
 
     def __init__(self, system_name: str = "Neurology Gait Pose Kinematics"):
         self.system_name = system_name

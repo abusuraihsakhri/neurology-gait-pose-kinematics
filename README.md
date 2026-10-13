@@ -1,162 +1,68 @@
 # Neurology Gait Pose Kinematics
 
-> **Domain:** Clinical Decision Support & Biomedical Computing  
-> **Reference Guidelines & Standards:** CAP / CLSI / ISO Standards, MDS-UPDRS Motor Examination Standards
+Rule-based numeric evaluation utilities for a **research demonstration**, with a standalone browser interface and two existing Python evaluation pipelines. The name is historical: this repository **does not** process video, estimate 3D poses, compute stride or joint kinematics, train gait classifiers, or produce validated MDS-UPDRS scores.
 
-<div align="center">
+## Browser application
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688.svg?logo=fastapi&logoColor=white)
-![Audit Trail](https://img.shields.io/badge/Audit-HMAC--SHA256_Tamper--Evident-brightgreen.svg)
-![Zero-PHI Guard](https://img.shields.io/badge/Guard-Zero--PHI_Outbound-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)
+The `web/` directory contains a fully local evaluator with three configurable-in-code checks. It runs without a backend or Python runtime, and is suitable for static hosting on GitHub Pages after Pages is enabled in repository settings.
 
-</div>
-
----
-
-## 📖 What It Does
-
-Neurology Gait Pose Kinematics is a multi-agent evaluation system for clinical gait analysis. It processes kinematic measurements through specialized worker agents that perform quality control, safety escalation, and protocol conformance checks, producing cryptographically signed audit trails for each evaluation.
-
----
-
-## ⚙️ Key Capabilities & Algorithmic Modules
-
-- **Deterministic Calculation Engine**: Strict compliance with standard reference formulations and thresholds.
-- **Risk & Urgency Classification**: Multi-tier categorization (ROUTINE, ELEVATED_RISK, CRITICAL_STAT_PANIC) with automated clinical/operational action recommendations.
-- **Validation & Guardrails**: Rigorous input bounds checking, NaN/Inf rejection, and anomaly detection.
-- **Multi-Agent Worker Architecture**: Specialized workers for QC invariants, safety boundaries, and protocol conformance.
-
----
-
-## 💻 CLI Quickstart & Usage
-
-### Installation
-```bash
-pip install -e ".[dev]"
-```
-
-### 1. Run Single Task Evaluation
-```bash
-python cli.py audit --task-id TASK-001 --target KEY-01 --primary 28.5 --secondary 14.2 --critical --status DISCORDANT
-```
-
-### 2. Interactive Chat Query
-```bash
-python cli.py chat "What is the system status?"
-```
-
-### 3. Batch Process CSV Records
-```bash
-python cli.py batch -i sample.csv -o results.csv
-```
-
-### 4. Verify Audit Trail Integrity
-```bash
-python cli.py verify-audit
-```
-
-### 5. Launch FastAPI REST Server
-```bash
-python cli.py serve --host 127.0.0.1 --port 8000
-```
-
-### Parameter Reference
-| Argument | Description | Default |
-|:---------|:------------|:--------|
-| `--task-id` | Unique task/case identifier | TASK-2026-001 |
-| `--target` | Entity or patient key identifier | KEY-TARGET-01 |
-| `--primary` | Primary domain measurement or score | 28.5 |
-| `--secondary` | Secondary kinetic or confidence score | 14.2 |
-| `--critical` | Emergency escalation flag | False |
-| `--status` | Status code or phenotype descriptor | DISCORDANT |
-
-### Input Data Schema (CSV/JSON)
-
-| Field | Description | Requirement |
-|:------|:------------|:------------|
-| `task_id` | Unique task identifier | Required |
-| `target_identifier` | Entity/patient key | Required |
-| `primary_metric` | Primary measurement value | Required |
-| `secondary_metric` | Secondary kinetic score | Optional (default: 0.0) |
-| `is_critical_flag` | Emergency escalation flag | Optional (default: false) |
-| `status_descriptor` | Status/phenotype code | Optional (default: NOMINAL) |
-
----
-
-## 🛡️ Security & Enterprise Architecture
-
-* **Zero-PHI Outbound Interceptor:** Active regex inspection blocking SSNs, MRNs, phone numbers, and patient identifiers.
-* **Tamper-Evident HMAC-SHA256 Audit Trail:** Chained, cryptographically signed logs for every evaluation and state transition.
-* **Air-Gapped LLM Reasoning Adapter:** Agnostic integration for local Ollama instances (`llama3`, `mistral`), Claude 3.5 Sonnet, GPT-4o, and deterministic test mocks.
-* **Active Learning Bayesian Calibration:** Dynamic tracker updating worker reliability weights and monitoring Brier calibration drift.
-* **FastAPI & Prometheus Telemetry:** Exposes OpenAPI 3.1 REST endpoints and operational Prometheus metrics (`/metrics`).
-
-### Security Configuration
-
-Set the `AUDIT_SECRET_KEY` environment variable in production:
-```bash
-export AUDIT_SECRET_KEY="your-secure-random-key-here"
-```
-
-Without this variable, the system will emit a warning and use a development-only default.
-
----
-
-## 🧪 Testing & Verification
-
-Run the automated test suite:
+To test locally:
 
 ```bash
-pytest -v
+python -m http.server 8080 --directory web
 ```
 
-Execute high-throughput batch simulation benchmarks:
+Open `http://localhost:8080/`. Evaluate one task or upload a CSV of up to 5,000 records (1 MB); download the resulting JSON or CSV. The browser version applies the main `agents/workers.py` rule thresholds: primary metric greater than **25**, secondary metric greater than **12**, explicit critical flag, and descriptor keyword matching. Equality to a threshold does not trigger an alert. It performs no network requests or persistent storage.
+
+**Limitations:** The thresholds are illustrative and not clinically validated. The results are rule flags, not diagnoses, triage instructions, or fall-risk estimates. Avoid uploading or entering protected health information. The browser does not generate cryptographic audit signatures.
+
+## Python CLI and API
+
+Python **3.10+** is required. The default CLI uses the `agents/` pipeline; the separately packaged `gait-mind` command uses the legacy `gait_mind_ai/` demonstration pipeline, which has different secondary thresholds.
 
 ```bash
-python simulator.py --tasks 1000 --concurrency 8
+python -m pip install -e ".[server,dev]"
+neurology-gait-pose-kinematics audit --task-id TASK-001 --target KEY-01 --primary 28.5 --secondary 14.2
+neurology-gait-pose-kinematics batch -i sample.csv -o results.csv
+neurology-gait-pose-kinematics verify-audit
+neurology-gait-pose-kinematics serve --host 127.0.0.1 --port 8000
 ```
 
----
+API endpoints: `GET /health`, `GET /metrics`, `POST /api/audit`, `POST /api/chat`. `GET /api/audit/logs` requires the `X-Audit-Token` header matching `AUDIT_ADMIN_TOKEN`; without that environment variable it is disabled.
 
-## 🐳 Container Deployment
+`sample.csv` demonstrates the batch fields: `task_id`, `target_identifier`, `primary_metric`, `secondary_metric`, `status_descriptor`, and `is_critical_flag`. Malformed Python batch rows are skipped with warnings; browser CSV batches instead report per-row errors.
+
+For container deployment:
 
 ```bash
-docker build -t neurology-gait-pose-kinematics .
-docker run -p 8000:8000 -e AUDIT_SECRET_KEY=your-secure-key neurology-gait-pose-kinematics
+export AUDIT_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+export AUDIT_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+docker compose up --build
 ```
 
----
+Compose binds to localhost by default. Treat access to the API as trusted-network access; it is **not** a production-grade clinical service with authenticated audit submissions.
 
-## 📁 Project Structure
+## Security and privacy
 
+Python evaluation results are retained in process memory, and the Python audit ledger stores HMAC-SHA256 entries (metadata and payload hashes, not raw metric details). Signature and predecessor checks detect post-hoc modifications within the running process. Provide `AUDIT_SECRET_KEY` to retain the same verification key across restarts; without it a random temporary key is generated with a warning. Neither ledger persistence nor clinical-record retention is implemented.
+
+The optional regex identifier filter detects some common identifier patterns; it is **not comprehensive de-identification, a HIPAA compliance guarantee, or an outbound network interceptor**. The chat adapter is a deterministic mock. External LLM providers are not implemented.
+
+## Testing
+
+```bash
+python -m pytest -q
+python -m compileall -q agents gait_mind_ai cli.py enrichment.py simulator.py
+node --test web/evaluator.test.mjs
+node --check web/ui.mjs
 ```
-neurology-gait-pose-kinematics/
-├── agents/                  # Multi-agent evaluation system
-│   ├── api.py              # FastAPI REST endpoints
-│   ├── base.py             # PHI guard, HMAC audit trail, security
-│   ├── models.py           # Pydantic v2 schemas
-│   ├── supervisor.py       # Master orchestrator
-│   ├── workers.py          # Specialized evaluation workers
-│   ├── llm_factory.py      # LLM provider abstraction
-│   ├── metrics.py          # Prometheus metrics collector
-│   ├── learning.py         # Bayesian calibration engine
-│   └── streamer.py         # WebSocket telemetry broadcaster
-├── gait_mind_ai/           # GaitMind-AI specialized module
-│   ├── agents.py           # Skeletal keypoint & UPDRS agents
-│   ├── engine.py           # Core algorithmic engine
-│   ├── models.py           # Data models & telemetry definitions
-│   ├── cli.py              # GaitMind-specific CLI
-│   └── server.py           # FastAPI server factory
-├── tests/                  # Pytest test suite
-├── web/                    # Static web assets
-├── cli.py                  # Main CLI entry point
-├── simulator.py            # High-throughput simulation benchmark
-├── enrichment.py           # Domain enrichment feature engines
-├── sample.csv              # Sample input data
-├── sample_payload.json     # Sample API payload
-├── Dockerfile              # Container build instructions
-└── docker-compose.yml      # Multi-service orchestration
-```
+
+GitHub Actions runs the Python suite on Python 3.10–3.12 and browser-rule tests on Node 22. The `enrichment.py` modules are placeholder numeric threshold evaluators, not functioning ML or device integrations.
+
+## Technology and compatibility
+
+Python, Pydantic 2, optional FastAPI/Uvicorn, and dependency-free ES modules/CSS/HTML for current desktop and mobile browsers. Run the browser app over HTTP(S), not via `file://`, so ES modules can load. The static web app uses no CDN.
+
+## License
+
+[MIT](LICENSE).

@@ -1,27 +1,37 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "neurology-gait-pose-kinematics"
-version = "2.0.0"
-description = "GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia"
+version = "2.0.1"
+description = "Rule-based gait-related metric assessment and audit utilities (research prototype)"
 readme = "README.md"
-authors = [{ name = "Dr. Abu Suraih Sakhri", email = "abusuraih@example.com" }]
+authors = [{ name = "Dr. Abu Suraih Sakhri" }]
 license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: Security/Cryptography",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
 ]
-requires-python = ">=3.9"
-dependencies = []
+requires-python = ">=3.10"
+dependencies = ["pydantic>=2,<3"]
+
+[project.optional-dependencies]
+server = ["fastapi>=0.111,<1", "uvicorn>=0.30,<1"]
+dev = ["pytest>=8,<10", "httpx>=0.27,<1", "fastapi>=0.111,<1"]
 
 [project.scripts]
-neurology-gait-pose-kinematics = "gait_mind_ai.cli:main"
+neurology-gait-pose-kinematics = "cli:main"
+gait-mind = "gait_mind_ai.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/abusuraihsakhri/neurology-gait-pose-kinematics"
-Repository = "https://github.com/abusuraihsakhri/neurology-gait-pose-kinematics.git"
+Repository = "https://github.com/abusuraihsakhri/neurology-gait-pose-kinematics"
+
+[tool.setuptools]
+py-modules = ["cli", "enrichment", "simulator", "gait_mind_ai_app"]
+
+[tool.setuptools.packages.find]
+include = ["agents*", "gait_mind_ai*"]

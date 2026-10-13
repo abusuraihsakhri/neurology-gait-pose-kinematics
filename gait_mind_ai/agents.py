@@ -9,7 +9,7 @@ from .engine import FrontierDomainEngine
 
 
 class SkeletalKeypointTracerAgent:
-    """Specialized Sub-Agent 1: Primary Parameter & Integrity Auditor."""
+    """Checks a supplied primary metric; does not extract skeletal keypoints."""
     def audit(self, payload: FrontierPayload) -> List[AgentTelemetryAlert]:
         alerts = []
         res = FrontierDomainEngine.evaluate_primary_parameter(payload.primary_metric)
@@ -43,7 +43,7 @@ class StrideKinematicVelocityAgent:
 
 
 class UPDRSMotorScorerAgent:
-    """Specialized Sub-Agent 3: Protocol Conformance & Anomaly Triager."""
+    """Checks status descriptors; does not calculate MDS-UPDRS scores."""
     def audit(self, payload: FrontierPayload) -> List[AgentTelemetryAlert]:
         alerts = []
         res = FrontierDomainEngine.audit_specification_conformance(payload.status_descriptor, payload.attributes)
@@ -93,7 +93,7 @@ class GaitMindCoordinator:
             "critical_count": crit_count,
             "warning_count": warn_count,
             "alerts": [a.to_dict() for a in all_alerts],
-            "standard_specification": "MDS-UPDRS Motor Examination Standards",
+            "standard_specification": "Illustrative threshold rules (not clinically validated)",
             "consensus_summary": f"Consensus evaluation completed across 3 sub-agents with status [{status.value}].",
         }
 
@@ -105,6 +105,6 @@ class GaitMindCoordinator:
         if "status" in q or "ledger" in q:
             return f"GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia currently managing {len(self.execution_ledger)} execution tasks in air-gapped memory."
         elif "standard" in q or "spec" in q:
-            return "Active runtime operating strictly according to MDS-UPDRS Motor Examination Standards specifications."
+            return "MDS-UPDRS Motor Examination Standards are not implemented; only demonstration numeric rules are available."
         else:
-            return f"GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia executive coordinator online. Zero-telemetry on-premises surveillance active."
+            return f"GaitMind-AI: 3D Video Pose Estimation & Parkinsonian Bradykinesia coordinator available for local rule evaluations; no continuous monitoring is performed."
