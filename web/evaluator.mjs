@@ -12,7 +12,8 @@ function text(value, name) {
   return value.trim();
 }
 function number(value, name) {
-  if (value === '' || value === null || value === undefined) {
+  if (value === '' || value === null || value === undefined ||
+      (typeof value === 'string' && !value.trim())) {
     throw new Error(name + ' is required');
   }
   const n = Number(value);
